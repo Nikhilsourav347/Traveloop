@@ -49,7 +49,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-
+  Future<void> _signInWithGoogle() async {
+    await ref.read(authControllerProvider.notifier).signInWithGoogle();
+  }
 
   @override
   void dispose() {
@@ -173,6 +175,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: isLoading ? null : _submit,
                     text: _isLogin ? 'Login' : 'Sign Up',
                     isLoading: isLoading,
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('OR', style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                      ),
+                      Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  OutlinedButton.icon(
+                    onPressed: isLoading ? null : _signInWithGoogle,
+                    icon: Image.network('https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg', height: 24, width: 24, errorBuilder: (c,e,s) => const Icon(Icons.g_mobiledata, size: 24)),
+                    label: const Text('Continue with Google'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      minimumSize: const Size(double.infinity, 56),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(

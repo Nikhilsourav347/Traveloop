@@ -1,5 +1,4 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LocalStorageService {
   static const String _userBox = 'user_box';
@@ -8,8 +7,9 @@ class LocalStorageService {
 
   /// Call once in main() before runApp
   static Future<void> init() async {
-    final dir = await getApplicationDocumentsDirectory();
-    await Hive.initFlutter(dir.path);
+    // initFlutter() already gets the application documents directory automatically.
+    // We do NOT need to pass dir.path to it.
+    await Hive.initFlutter();
 
     await Hive.openBox<Map>(_userBox);
     await Hive.openBox<Map>(_tripsBox);

@@ -10,13 +10,45 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1️⃣ Initialise Firebase (Auth only)
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // 2️⃣ Initialise Hive local storage (trips, settings — no cloud DB)
+  // Initialise Hive local storage first (works offline)
   await LocalStorageService.init();
+
+  // Initialise Firebase (Auth — requires internet for first login only)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init error: $e');
+    // App continues — user can still use local features
+  }
+
+  // Global Error Handler to show crash errors on the screen
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Material(
+      child: Container(
+        color: Colors.red.shade100,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 64),
+            const SizedBox(height: 16),
+            const Text(
+              'App Crashed!',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              details.exceptionAsString(),
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+    );
+  };
 
   runApp(
     const ProviderScope(

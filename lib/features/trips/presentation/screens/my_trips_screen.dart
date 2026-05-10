@@ -48,8 +48,12 @@ class _MyTripsScreenState extends ConsumerState<MyTripsScreen>
       appBar: AppBar(
         title: const Text('My Trips'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.explore),
+            tooltip: 'Destinations & Budgets',
+            onPressed: () => context.push('/suggestions'),
+          ),
           IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.filter_list), onPressed: () {}),
         ],
         bottom: TabBar(
           controller: _tabController,

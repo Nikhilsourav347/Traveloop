@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository_interface.dart';
 import '../../../../core/services/local_storage_service.dart';
@@ -35,6 +36,36 @@ class AuthRepository implements IAuthRepository {
     }
   }
 
+  // ─── Sign In with Google ─────────────────────────────────────
+  @override
+  Future<UserEntity> signInWithGoogle() async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        // We use the Web Client ID for Android/iOS Google Sign-in Firebase integration
+        serverClientId: '278960721253-vfvcb0uqq0nq00tdtag3rf0k3jd07vu0.apps.googleusercontent.com',
+      );
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        throw Exception('Google sign-in was aborted.');
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final fb.OAuthCredential credential = fb.GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final fb.UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final entity = _toEntity(userCredential.user!);
+      _cacheUser(entity);
+      return entity;
+    } on fb.FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
+    } catch (e) {
+      throw Exception('Failed to sign in with Google: $e');
+    }
+  }
+
   // ─── Sign Up ─────────────────────────────────────────────────
   @override
   Future<UserEntity> signUpWithEmail(
@@ -58,6 +89,7 @@ class AuthRepository implements IAuthRepository {
   // ─── Sign Out ────────────────────────────────────────────────
   @override
   Future<void> signOut() async {
+    await GoogleSignIn().signOut();
     await _firebaseAuth.signOut();
     localStorageService.clearUser();
   }
@@ -76,7 +108,7 @@ class AuthRepository implements IAuthRepository {
   UserEntity _toEntity(fb.User fbUser, {String? overrideName}) {
     return UserEntity(
       id: fbUser.uid,
-      name: overrideName ?? fbUser.displayName ?? fbUser.email!.split('@').first,
+      name: overrideName ?? fbUser.displayName ?? fbUser.email?.split('@').first ?? 'Traveler',
       email: fbUser.email ?? '',
       photoUrl: fbUser.photoURL,
     );

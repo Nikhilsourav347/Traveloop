@@ -18,6 +18,7 @@ dependencies:
   # Firebase (Auth only — data stored locally)
   firebase_core: ^2.24.0
   firebase_auth: ^4.15.0
+  google_sign_in: ^6.1.6
 
   # UI Components
   google_fonts: ^6.1.0
@@ -26,11 +27,12 @@ dependencies:
   flutter_svg: ^2.0.9
   shimmer: ^3.0.0
 
-  # Utilities
+  # Utilities & Online Data
   intl: ^0.18.1
   uuid: ^4.2.1
   share_plus: ^7.2.1
   path_provider: ^2.1.1
+  dio: ^5.4.0
 
   # Local Storage (ALL trip/profile data stored on device)
   shared_preferences: ^2.2.2

@@ -13,6 +13,7 @@ import '../features/trips/presentation/screens/my_trips_screen.dart';
 import '../features/trips/presentation/screens/create_trip_screen.dart';
 import '../features/trips/presentation/screens/itinerary_builder_screen.dart';
 import '../features/search/presentation/screens/activity_search_screen.dart';
+import '../features/trips/presentation/screens/suggestions_screen.dart';
 import '../features/budget/presentation/screens/budget_analytics_screen.dart';
 import '../shared/widgets/bottom_nav_bar.dart';
 
@@ -53,6 +54,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/suggestions',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SuggestionsScreen(),
       ),
       GoRoute(
         path: '/create-trip',
