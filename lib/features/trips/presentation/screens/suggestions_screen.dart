@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/services/online_travel_service.dart';
 import 'package:intl/intl.dart';
 
@@ -135,6 +136,7 @@ class _BudgetEstimatorSheetState extends ConsumerState<_BudgetEstimatorSheet> {
         destination: widget.destination['name'],
         startDate: _dateRange!.start,
         endDate: _dateRange!.end,
+        distanceKm: widget.destination['distanceKm'] as double? ?? 5000.0,
         baseDailyBudget: widget.destination['baseDailyBudget'] as double,
       );
       setState(() {
@@ -187,6 +189,27 @@ class _BudgetEstimatorSheetState extends ConsumerState<_BudgetEstimatorSheet> {
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Food & Dining:'), Text('\$${_estimate!['breakdown']['food']}')]),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Transport:'), Text('\$${_estimate!['breakdown']['transport']}')]),
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text('Activities:'), Text('\$${_estimate!['breakdown']['activities']}')]),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        final text = 'Check out this travel budget estimate!\n\n'
+                            'Destination: ${_estimate!['destination']}\n'
+                            'Distance: ${_estimate!['distanceKm']} km\n'
+                            'Days: ${_estimate!['days']} (${_estimate!['season']})\n'
+                            'Total Cost: \$${_estimate!['totalEstimatedCost']}\n\n'
+                            'Accommodation: \$${_estimate!['breakdown']['accommodation']}\n'
+                            'Food: \$${_estimate!['breakdown']['food']}\n'
+                            'Transport: \$${_estimate!['breakdown']['transport']}\n'
+                            'Activities: \$${_estimate!['breakdown']['activities']}\n\n'
+                            'Planned with Traveloop App!';
+                        Share.share(text);
+                      },
+                      icon: const Icon(Icons.share),
+                      label: const Text('Share Estimate'),
+                    ),
+                  ),
                 ],
               ),
             )
